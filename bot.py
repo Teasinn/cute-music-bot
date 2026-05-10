@@ -4,7 +4,7 @@ import discord
 import yt_dlp
 import asyncio
 from collections import deque
-import subprocess
+import requests
 
 load_dotenv()
 
@@ -50,8 +50,8 @@ async def onepiece():
     current = "nothing"
 
     while True:
-        result = subprocess.run(['curl', 'https://tcbonepiecechapters.com/mangas/5/one-piece', '--silent'], stdout=subprocess.PIPE)
-        out = result.stdout.decode('utf-8')
+        out = requests.get('https://tcbonepiecechapters.com/mangas/5/one-piece')
+        out = out.text
 
         position = out.find("one-piece-chapter")
         chapter = f'{out[position-15:position+22]}'
@@ -62,8 +62,6 @@ async def onepiece():
             current = chapter
         else:
             current = chapter
-            #send pog message
-            #print(f'NEW CHAPTER https://tcbonepiecechapters.com/mangas/5/one-piece{current}')
             channel = discord.utils.get(client.get_all_channels(), guild__name='ɃΘNK', name='onepiece')
             await channel.send(f'@everyone [NEW CHAPTER {out[position+18:position+22]} JUST DROPPED](<https://tcbonepiecechapters.com{current}>)')
         await asyncio.sleep(60*60)
